@@ -1,0 +1,310 @@
+{
+  "name": "Meu primeiro Agente de IA-flowgrammers",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -128,
+        0
+      ],
+      "id": "d6a7f097-d8ca-4165-8607-1d64964bf119",
+      "name": "When chat message received",
+      "webhookId": "8ae18702-d9f5-48a2-a869-9aabe1d12d16"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Você é um assistente de bem-estar.\n\nNo início da conversa, se o usuário apenas cumprimentar (ex: \"olá\", \"oi\", ou \"com o nome\"), responda de forma amigável se apresentando e iniciando a conversa dizendo quem você é e como pode ajudar.\n\nAntes de fornecer qualquer sugestão, você deve fazer perguntas para entender o usuário.\n\nPergunte:\n- Qual seu objetivo? (emagrecer, manter peso, ganhar massa)\n- Você pratica atividade física?\n- Tem alguma restrição alimentar?\n\nRegras:\n- Faça uma pergunta por vez\n- faça no máximo 3 perguntas e depois forneça sugestões gerais com base nas respostas\n- Espere a resposta do usuário\n- Depois que tiver informações suficientes, dê sugestões gerais\n\nNunca prescreva dietas específicas.\nUse bullet points e emojis.\n\nFeedback:\nEssa resposta foi útil? 😊\n1 - Sim 👍\n2 - Não 👎\n\n\n",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        80,
+        0
+      ],
+      "id": "74f34e64-d302-4097-9e50-dbe27d80fafd",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        208
+      ],
+      "id": "fabce69a-a9e2-442b-a9fa-0ea4eaa912ba",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "tQe1lIybWedTfORU",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        96,
+        208
+      ],
+      "id": "f0284431-053a-4ae5-8a28-5dc0b323f07b",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1w515wWHzs2s3WfKi7WqsnrpVNv0E2SRqg6THnZfDXOQ/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Folha1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1w515wWHzs2s3WfKi7WqsnrpVNv0E2SRqg6THnZfDXOQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nome": "={{ $json[\"nome\"] }}",
+            "Objetivo": "={{ $json[\"objetivo\"] }}",
+            "Restrição": "={{ $json[\"restricao\"] }}",
+            "Data": "={{ $json[\"data\"] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Objetivo",
+              "displayName": "Objetivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Atividade",
+              "displayName": "Atividade",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Restrição",
+              "displayName": "Restrição",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Feedback",
+              "displayName": "Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        432,
+        0
+      ],
+      "id": "b070d407-dc57-4bb0-8f65-b4a82ba018bc",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7WrGp80O1T3DTvev",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8df99e18-23d1-4993-936b-0da44bb9d57f",
+              "name": "resposta",
+              "value": "={{ $json[\"output\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        160
+      ],
+      "id": "ab27b954-f512-41cb-86d3-29138ae288bc",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "63cb8453-f97b-4714-bd47-3d1bd184ad0b",
+              "leftValue": "={{$json.chatInput}}",
+              "rightValue": "sim",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "634e0dbc-66ee-4764-9d77-88f4b6b7627e",
+              "leftValue": "={{$json.chatInput}}",
+              "rightValue": "não",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        592,
+        160
+      ],
+      "id": "2fb81ea5-1219-470e-9074-6686bc94bc2c",
+      "name": "If"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9a8572fe-fe4a-4493-82d6-73c73ce7fbfc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c090cb50609d258c1b236b11d566f4f5f586ea23ff1b372e0492bc01b9fbceec"
+  },
+  "id": "BkPXYmIPi1Yz6JVI",
+  "tags": []
+}
